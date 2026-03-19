@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital Registration</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="page-shell">
+        <section class="hero-panel">
+            <div class="hero-copy">
+                <span class="eyebrow">Care That Starts Smoothly</span>
+                <h1>Hospital registration with a calmer, clearer experience.</h1>
+                <p>Complete admission details in a clean guided form designed to feel welcoming for patients and efficient for staff. Every step is structured to reduce friction and build confidence.</p>
+
+                <div class="hero-stats">
+                    <div class="stat-card">
+                        <span class="stat-value">24/7</span>
+                        <span class="stat-label">Admission support flow</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-value">Fast</span>
+                        <span class="stat-label">Doctor assignment selection</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-value">Secure</span>
+                        <span class="stat-label">Patient-first data capture</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container">
+                <h2>Patient Registration</h2>
+                <p class="section-intro">Share the patient details below to begin admission and move to payment in the next step.</p>
+
+                <div class="highlight-strip">
+                    <div class="detail-card">
+                        <strong>Simple intake</strong>
+                        <span>Clean layout with clear fields and better readability.</span>
+                    </div>
+                    <div class="detail-card">
+                        <strong>Smart assignment</strong>
+                        <span>Doctors update automatically based on the selected condition.</span>
+                    </div>
+                    <div class="detail-card">
+                        <strong>Step-by-step flow</strong>
+                        <span>Registration, payment, and summary stay visually consistent.</span>
+                    </div>
+                </div>
+
+                <form action="payment.html" method="get">
+                    <div class="form-grid">
+                        <div class="field-group">
+                            <label for="patientName">Patient Name</label>
+                            <input type="text" id="patientName" name="patientName" placeholder="Enter full name" required>
+                        </div>
+
+                        <div class="field-group">
+                            <label for="age">Age</label>
+                            <input type="number" id="age" name="age" min="0" max="120" placeholder="Enter age" required>
+                        </div>
+
+                        <div class="field-group">
+                            <label for="gender">Gender</label>
+                            <select id="gender" name="gender" required>
+                                <option value="" disabled selected>Select gender</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+
+                        <div class="field-group">
+                            <label for="contact">Contact Number</label>
+                            <input type="text" id="contact" name="contact" pattern="[0-9]{10}" title="Enter a 10-digit phone number" placeholder="10-digit phone number" required>
+                        </div>
+
+                        <div class="field-group full-width">
+                            <label for="address">Address</label>
+                            <textarea id="address" name="address" placeholder="Enter patient address" required></textarea>
+                        </div>
+
+                        <div class="field-group">
+                            <label for="admissionDate">Date of Admission</label>
+                            <input type="date" id="admissionDate" name="admissionDate" required>
+                        </div>
+
+                        <div class="field-group">
+                            <label for="disease">Disease / Condition</label>
+                            <select id="disease" name="disease" required>
+                                <option value="" disabled selected>Select a disease</option>
+                                <option value="Flu">Flu</option>
+                                <option value="Cold">Cold</option>
+                                <option value="Diabetes">Diabetes</option>
+                                <option value="Hypertension">Hypertension</option>
+                                <option value="Asthma">Asthma</option>
+                            </select>
+                        </div>
+
+                        <div class="field-group">
+                            <label for="doctor">Doctor Assigned</label>
+                            <select id="doctor" name="doctor" required disabled>
+                                <option value="" disabled selected>Select a doctor</option>
+                            </select>
+                        </div>
+
+                        <div class="field-group full-width">
+                            <input type="submit" value="Continue to Payment">
+                            <div class="mini-note">Tip: select a condition to unlock the doctor list.</div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const diseaseToDoctors = {
+            Flu: ["Dr. Smith", "Dr. Johnson"],
+            Cold: ["Dr. Lee", "Dr. Kim"],
+            Diabetes: ["Dr. Patel", "Dr. Gupta"],
+            Hypertension: ["Dr. Brown", "Dr. Davis"],
+            Asthma: ["Dr. Wilson", "Dr. Martinez"]
+        };
+
+        const diseaseSelect = document.getElementById("disease");
+        const doctorSelect = document.getElementById("doctor");
+
+        diseaseSelect.addEventListener("change", function () {
+            const selectedDisease = this.value;
+            doctorSelect.innerHTML = '<option value="" disabled selected>Select a doctor</option>';
+
+            if (selectedDisease && diseaseToDoctors[selectedDisease]) {
+                diseaseToDoctors[selectedDisease].forEach((doctor) => {
+                    const option = document.createElement("option");
+                    option.value = doctor;
+                    option.textContent = doctor;
+                    doctorSelect.appendChild(option);
+                });
+                doctorSelect.disabled = false;
+            } else {
+                doctorSelect.disabled = true;
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Payment Methods</title>
+    <link rel="stylesheet" href="style.css">
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const paymentMethodSelect = document.getElementById("paymentMethod");
+            const detailsContainer = document.getElementById("paymentDetails");
+            const paymentForm = document.querySelector("form");
+
+            function updateDetails() {
+                const method = paymentMethodSelect.value;
+                let html = "";
+
+                switch (method) {
+                    case "creditCard":
+                        html = `
+                            <div class="payment-detail">
+                                <label for="cardNumber">Card Number</label>
+                                <input type="text" id="cardNumber" name="cardNumber" required maxlength="16" pattern="\\d{16}" placeholder="1234567890123456">
+                            </div>
+                            <div class="payment-detail">
+                                <label for="expiryDate">Expiry Date</label>
+                                <input type="month" id="expiryDate" name="expiryDate" required>
+                            </div>
+                            <div class="payment-detail">
+                                <label for="cvv">CVV</label>
+                                <input type="password" id="cvv" name="cvv" required maxlength="4" pattern="\\d{3,4}" placeholder="123">
+                            </div>
+                        `;
+                        break;
+                    case "paypal":
+                        html = `
+                            <div class="payment-detail">
+                                <label for="paypalEmail">PayPal Email</label>
+                                <input type="email" id="paypalEmail" name="paypalEmail" required placeholder="email@example.com">
+                            </div>
+                        `;
+                        break;
+                    case "bankTransfer":
+                        html = `
+                            <div class="payment-detail">
+                                <label for="bankAccount">Bank Account Number</label>
+                                <input type="text" id="bankAccount" name="bankAccount" required placeholder="Account Number">
+                            </div>
+                            <div class="payment-detail">
+                                <label for="bankName">Bank Name</label>
+                                <input type="text" id="bankName" name="bankName" required placeholder="Bank Name">
+                            </div>
+                        `;
+                        break;
+                    case "cash":
+                        html = `
+                            <div class="payment-detail success-banner">
+                                Please pay at the hospital counter upon arrival.
+                            </div>
+                        `;
+                        break;
+                    default:
+                        html = "";
+                }
+
+                detailsContainer.innerHTML = html;
+            }
+
+            paymentMethodSelect.addEventListener("change", updateDetails);
+
+            function getQueryParams() {
+                const params = {};
+                const queryString = window.location.search.substring(1);
+                const pairs = queryString.split("&");
+
+                for (const pair of pairs) {
+                    if (pair) {
+                        const [key, value] = pair.split("=");
+                        params[decodeURIComponent(key)] = decodeURIComponent(value || "");
+                    }
+                }
+
+                return params;
+            }
+
+            function displayRegistrationDetails() {
+                const params = getQueryParams();
+                const container = document.getElementById("regDetailsContent");
+
+                if (Object.keys(params).length === 0) {
+                    container.innerHTML = "<p class='muted-text'>No registration details found.</p>";
+                    return;
+                }
+
+                const fields = {
+                    patientName: "Patient Name",
+                    age: "Age",
+                    gender: "Gender",
+                    contact: "Contact Number",
+                    address: "Address",
+                    admissionDate: "Date of Admission",
+                    disease: "Disease / Condition",
+                    doctor: "Doctor Assigned"
+                };
+
+                let html = "<ul>";
+                for (const key in fields) {
+                    if (params[key]) {
+                        html += `<li><strong>${fields[key]}:</strong> ${params[key]}</li>`;
+                    }
+                }
+                html += "</ul>";
+                container.innerHTML = html;
+            }
+
+            paymentForm.addEventListener("submit", function (event) {
+                event.preventDefault();
+
+                if (!paymentMethodSelect.value) {
+                    alert("Please select a payment method.");
+                    return;
+                }
+
+                const inputs = paymentForm.querySelectorAll("input[required]");
+                for (const input of inputs) {
+                    if (!input.checkValidity()) {
+                        alert(`Please fill out the ${input.previousElementSibling.textContent} correctly.`);
+                        input.focus();
+                        return;
+                    }
+                }
+
+                const params = getQueryParams();
+                params.paymentMethod = paymentMethodSelect.value;
+
+                switch (paymentMethodSelect.value) {
+                    case "creditCard":
+                        params.cardNumber = document.getElementById("cardNumber").value;
+                        params.expiryDate = document.getElementById("expiryDate").value;
+                        params.cvv = document.getElementById("cvv").value;
+                        break;
+                    case "paypal":
+                        params.paypalEmail = document.getElementById("paypalEmail").value;
+                        break;
+                    case "bankTransfer":
+                        params.bankAccount = document.getElementById("bankAccount").value;
+                        params.bankName = document.getElementById("bankName").value;
+                        break;
+                    case "cash":
+                        break;
+                }
+
+                const queryString = new URLSearchParams(params).toString();
+                window.location.href = "summary.html?" + queryString;
+            });
+
+            displayRegistrationDetails();
+        });
+    </script>
+</head>
+<body>
+    <main class="page-shell">
+        <section class="hero-panel">
+            <div class="hero-copy">
+                <span class="eyebrow">Step 2 of 3</span>
+                <h1>Confirm payment with the same calm, guided flow.</h1>
+                <p>Review the submitted patient details, choose the payment option that works best, and continue to a polished summary page.</p>
+
+                <div class="hero-stats">
+                    <div class="stat-card">
+                        <span class="stat-value">4</span>
+                        <span class="stat-label">Flexible payment methods</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-value">Clear</span>
+                        <span class="stat-label">Readable patient recap</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-value">Safe</span>
+                        <span class="stat-label">Validated input fields</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container">
+                <h2>Payment Details</h2>
+                <p class="section-intro">Check the registration information below, then select how you would like to complete the payment.</p>
+
+                <div id="registrationDetails" class="registration-details">
+                    <h2>Registration Overview</h2>
+                    <div id="regDetailsContent">Loading registration details...</div>
+                </div>
+
+                <form action="#" method="post">
+                    <div class="form-grid">
+                        <div class="field-group full-width">
+                            <label for="paymentMethod">Select Payment Method</label>
+                            <select id="paymentMethod" name="paymentMethod" required>
+                                <option value="" disabled selected>Select a payment method</option>
+                                <option value="creditCard">Credit Card</option>
+                                <option value="paypal">PayPal</option>
+                                <option value="bankTransfer">Bank Transfer</option>
+                                <option value="cash">Cash</option>
+                            </select>
+                        </div>
+
+                        <div id="paymentDetails" class="field-group full-width"></div>
+
+                        <div class="field-group full-width">
+                            <input type="submit" value="Pay Now">
+                        </div>
+                    </div>
+                </form>
+
+                <div class="page-actions">
+                    <a href="index.html" class="back-link">Back to Registration</a>
+                </div>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

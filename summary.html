@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Registration Summary</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="page-shell">
+        <section class="summary-container">
+            <span class="eyebrow">Step 3 of 3</span>
+            <h2>Registration Summary</h2>
+            <p class="section-intro">Everything has been collected successfully. Review the final information below before returning to the registration form.</p>
+
+            <div class="summary-banner">
+                Admission details and payment confirmation are shown together for a quick final review.
+            </div>
+
+            <div id="summaryDetails" class="summary-list"></div>
+
+            <div class="page-actions">
+                <button type="button" class="primary-button print-button" onclick="window.print()">Print Summary</button>
+                <a href="index.html" class="back-link">Back to Registration</a>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        function getQueryParams() {
+            const params = {};
+            const queryString = window.location.search.substring(1);
+            const pairs = queryString.split("&");
+
+            for (const pair of pairs) {
+                if (pair) {
+                    const [key, value] = pair.split("=");
+                    params[decodeURIComponent(key)] = decodeURIComponent(value || "");
+                }
+            }
+
+            return params;
+        }
+
+        function displaySummary() {
+            const params = getQueryParams();
+            const container = document.getElementById("summaryDetails");
+
+            if (Object.keys(params).length === 0) {
+                container.innerHTML = "<div class='summary-item'>No registration details found.</div>";
+                return;
+            }
+
+            const fields = {
+                patientName: "Patient Name",
+                age: "Age",
+                gender: "Gender",
+                contact: "Contact Number",
+                address: "Address",
+                admissionDate: "Date of Admission",
+                disease: "Disease / Condition",
+                doctor: "Doctor Assigned",
+                paymentMethod: "Payment Method"
+            };
+
+            let html = "";
+            for (const key in fields) {
+                if (params[key]) {
+                    html += `<div class="summary-item"><span class="summary-label">${fields[key]}</span>${params[key]}</div>`;
+                }
+            }
+
+            if (params.paymentMethod) {
+                html += `<div class="success-banner">Payment completed successfully using ${params.paymentMethod}.</div>`;
+            }
+
+            container.innerHTML = html;
+        }
+
+        displaySummary();
+    </script>
+</body>
+</html>
