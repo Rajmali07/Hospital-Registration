@@ -424,6 +424,13 @@ input[type="submit"]:hover,
     font-size: 0.92rem;
 }
 
+.site-footer {
+    margin-top: 26px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.92rem;
+}
+
 @keyframes riseIn {
     from {
         opacity: 0;
@@ -510,5 +517,9 @@ input[type="submit"]:hover,
 
     .page-actions {
         display: none;
+    }
+
+    .site-footer {
+        margin-top: 18px;
     }
 }
